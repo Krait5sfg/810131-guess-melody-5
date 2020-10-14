@@ -1,22 +1,23 @@
 import React, {PureComponent} from 'react';
-import {GameType} from '../../const';
+import genreQuestionProp from "./genre-question.prop";
 import PropTypes from 'prop-types';
-import AudioPlayer from "../audio-player/audio-player";
 
 export default class GenreQuestionScreen extends PureComponent {
   constructor(props) {
     super(props);
 
     this.state = {
-      activePlayer: 0,
       answers: [false, false, false, false]
     };
   }
 
   render() {
-    const {onAnswer, question} = this.props;
-    const {answers: userAnswers, activePlayer} = this.state;
-    const {answers, genre} = question;
+    const {onAnswer, question, renderPlayer} = this.props;
+    const {answers: userAnswers} = this.state;
+    const {
+      answers,
+      genre,
+    } = question;
 
     return (
       <section className="game game--genre">
@@ -48,15 +49,7 @@ export default class GenreQuestionScreen extends PureComponent {
           >
             {answers.map((answer, i) => (
               <div key={`${i}-${answer.src}`} className="track">
-                <AudioPlayer
-                  onPlayButtonClick={() => {
-                    this.setState({
-                      activePlayer: activePlayer === i ? -1 : i,
-                    });
-                  }}
-                  isPlaying={i === activePlayer}
-                  src={answer.src}
-                />
+                {renderPlayer(answer.src, i)}
                 <div className="game__answer">
                   <input className="game__input visually-hidden" type="checkbox" name="answer" value={`answer-${i}`}
                     id={`answer-${i}`}
@@ -84,12 +77,6 @@ export default class GenreQuestionScreen extends PureComponent {
 
 GenreQuestionScreen.propTypes = {
   onAnswer: PropTypes.func.isRequired,
-  question: PropTypes.shape({
-    answers: PropTypes.arrayOf(PropTypes.shape({
-      src: PropTypes.string.isRequired,
-      genre: PropTypes.string.isRequired,
-    })).isRequired,
-    genre: PropTypes.string.isRequired,
-    type: PropTypes.oneOf([GameType.ARTIST, GameType.GENRE]).isRequired,
-  }).isRequired,
+  question: genreQuestionProp,
+  renderPlayer: PropTypes.func.isRequired,
 };
