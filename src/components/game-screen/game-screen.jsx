@@ -58,8 +58,7 @@ const GameScreen = (props) => {
 };
 
 GameScreen.propTypes = {
-  questions: PropTypes.arrayOf(
-    PropTypes.oneOfType([artistQuestionProp, genreQuestionProp]).isRequired
+  questions: PropTypes.arrayOf(PropTypes.oneOfType([artistQuestionProp, genreQuestionProp]).isRequired
   ),
   step: PropTypes.number.isRequired,
   resetGame: PropTypes.func.isRequired,
