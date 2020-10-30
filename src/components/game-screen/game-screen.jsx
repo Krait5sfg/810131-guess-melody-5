@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from 'prop-types';
 import {Redirect} from 'react-router-dom';
 import {connect} from "react-redux";
-import {ActionCreator} from "../../store/action";
-import {GameType, MAX_MISTAKE_COUNT} from '../../const';
+import {incrementStep, incrementMistake, resetGame} from "../../store/action";
+import {GameType, MAX_MISTAKE_COUNT, AppRoute} from '../../const';
 import ArtistQuestionScreen from '../artist-question-screen/artist-question-screen';
 import GenreQuestionScreen from '../genre-question-screen/genre-question-screen';
 import Mistakes from "../mistakes/mistakes";
@@ -27,13 +27,13 @@ const GameScreen = (props) => {
 
   if (mistakes >= MAX_MISTAKE_COUNT) {
     return (
-      <Redirect to="/lose" />
+      <Redirect to={AppRoute.LOSE} />
     );
   }
 
   if (step >= questions.length || !question) {
     return (
-      <Redirect to="/result" />
+      <Redirect to={AppRoute.RESULT} />
     );
   }
 
@@ -41,6 +41,7 @@ const GameScreen = (props) => {
     case GameType.ARTIST:
       return (
         <ArtistQuestionScreenWrapped
+          key={step}
           question={question}
           onAnswer={onUserAnswer}
         >
@@ -50,6 +51,7 @@ const GameScreen = (props) => {
     case GameType.GENRE:
       return (
         <GenreQuestionScreenWrapped
+          key={step}
           question={question}
           onAnswer={onUserAnswer}
         >
@@ -58,7 +60,7 @@ const GameScreen = (props) => {
       );
   }
 
-  return <Redirect to="/" />;
+  return <Redirect to={AppRoute.ROOT} />;
 };
 
 GameScreen.propTypes = {
@@ -69,19 +71,19 @@ GameScreen.propTypes = {
   mistakes: PropTypes.number.isRequired,
 };
 
-const mapStateToProps = (state) => ({
-  step: state.step,
-  mistakes: state.mistakes,
-  questions: state.questions,
+const mapStateToProps = ({GAME, DATA}) => ({
+  step: GAME.step,
+  mistakes: GAME.mistakes,
+  questions: DATA.questions,
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  resetGame() {
-    dispatch(ActionCreator.resetGame());
+  resetGameAction() {
+    dispatch(resetGame());
   },
   onUserAnswer(question, answer) {
-    dispatch(ActionCreator.incrementStep());
-    dispatch(ActionCreator.incrementMistake(question, answer));
+    dispatch(incrementStep());
+    dispatch(incrementMistake(question, answer));
   },
 });
 
